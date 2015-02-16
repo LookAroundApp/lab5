@@ -11,7 +11,7 @@ public class Main {
 		String url = "";
 		String name = "";
 		String password = "";
-		CreateProc cp;
+		Processor cp;
 		Scanner inp = new Scanner(System.in);
 
 		if ((args.length == 0)
@@ -32,11 +32,8 @@ public class Main {
 			Main.usage();
 		}
 
-		cp = new CreateProc(url, name, password);
-		/*
-		 * PreparedStatement pstmt = con.prepareStatement("{call new_db(?)}");
-		 * pstmt.setString(1, "testtest"); pstmt.executeQuery();
-		 */
+		cp = new Processor(url, name, password);
+		
 		while (true) {
 			String req = getRequest(inp);
 			if (req.equals("exit")) {
@@ -52,7 +49,7 @@ public class Main {
 		return s.nextLine();
 	}
 
-	private static void proceedRequest(String request, CreateProc cp)
+	private static void proceedRequest(String request, Processor cp)
 			throws SQLException {
 		String[] parts = request.split(" ");
 		String command = parts[0];
