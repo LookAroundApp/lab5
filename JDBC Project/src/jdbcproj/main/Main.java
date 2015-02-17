@@ -13,6 +13,7 @@ public class Main {
 		String password = "";
 		Processor cp;
 		Scanner inp = new Scanner(System.in);
+		Memory m;
 
 		if ((args.length == 0)
 				|| (args.length == 1 && args[0].equals("default"))) {
@@ -33,7 +34,7 @@ public class Main {
 		}
 
 		cp = new Processor(url, name, password);
-		
+
 		while (true) {
 			String req = getRequest(inp);
 			if (req.equals("exit")) {
@@ -78,13 +79,97 @@ public class Main {
 			}
 			break;
 		case "table":
-			if (parts.length >= 3) {
+			if (parts.length > 2) {
 				String name = parts[1];
 				String[] fields = new String[parts.length - 2];
 				for (int i = 2; i < parts.length; i++) {
 					fields[i - 2] = parts[i];
 				}
 				if (cp.createTable(name, fields)) {
+					System.out.println("Success");
+				}
+			} else {
+				wrongCommand(request);
+			}
+			break;
+		case "drop":
+			if (parts.length == 2) {
+				String name = parts[1];
+				if (cp.dropTable(name)) {
+					System.out.println("Success");
+				}
+			} else {
+				wrongCommand(request);
+			}
+			break;
+		case "add":
+			if (parts.length > 2) {
+				String name = parts[1];
+				String[] values = new String[parts.length - 2];
+				for (int i = 2; i < parts.length; i++) {
+					values[i - 2] = parts[i];
+				}
+				if (cp.addRow(name, values)) {
+					System.out.println("Success");
+				}
+			} else {
+				wrongCommand(request);
+			}
+			break;
+		case "search":
+			if (parts.length == 4) {
+				String name = parts[1];
+				String col = parts[2];
+				String needle = parts[3];
+				if (cp.search(name, col, needle)) {
+					System.out.println("Success");
+					cp.showMemory(); // todo
+				}
+			} else {
+				wrongCommand(request);
+			}
+			break;
+		case "memfree":
+			if (parts.length == 1) {
+				cp.clearMemory();
+				System.out.println("Memory is empty");
+			} else {
+				wrongCommand(request);
+			}
+			break;
+		case "remove":
+			if (parts.length == 1) {
+				if (cp.removeRows()) {
+					System.out.println("Success");
+				}
+			} else {
+				wrongCommand(request);
+			}
+			break;
+		case "update":
+			if (parts.length > 1) {
+				String[] f = new String[parts.length - 1];
+				String[] v = new String[parts.length - 1];
+				for (int i = 1; i < parts.length; i++) {
+					if (parts[i].contains(":")) {
+						String[] f_v = parts[i].split(":");
+						f[i - 1] = f_v[0];
+						v[i - 1] = f_v[1];
+					} else {
+						wrongCommand(parts[i]);
+					}
+				}
+				if (cp.updateRows(f, v)) {
+					System.out.println("Success");
+				}
+			} else {
+				wrongCommand(request);
+			}
+			break;
+		case "fire":
+			if (parts.length == 2) {
+				String name = parts[1];
+				if (cp.removeDB(name)) {
 					System.out.println("Success");
 				}
 			} else {
